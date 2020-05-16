@@ -1,9 +1,6 @@
 # build stage
 FROM ubuntu:bionic
 
-# starter script
-COPY start.sh /root
-
 # add 32bit arch.
 RUN dpkg --add-architecture i386
 
@@ -20,6 +17,9 @@ RUN winetricks -q corefonts
 # Download fitbit OS
 WORKDIR /fitbitos
 RUN wget -O fitbitos.exe "https://simulator-updates.fitbit.com/Fitbit OS Simulator-latest-0.8.2.exe" 
+
+# starter script
+COPY start.sh /root
 
 ENTRYPOINT [ "/bin/bash" ]
 
