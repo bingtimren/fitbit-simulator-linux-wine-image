@@ -1,7 +1,7 @@
 # build stage
 FROM ubuntu:focal
 
-# Install latest wine, see https://itsfoss.com/wine-5-release/
+# Install latest wine, see https://wiki.winehq.org/Ubuntu
 
 # add 32bit arch.
 RUN dpkg --add-architecture i386
@@ -9,11 +9,14 @@ ENV WINEARCH=win32
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt -y update
 RUN apt -y upgrade
-RUN apt -y install wine-stable wget 
-# install wine-lol, the only option I found working
-RUN wget https://m-reimer.de/wine-lol/debian/wine-lol-glibc_2.32-2_i386.deb
-RUN wget https://m-reimer.de/wine-lol/debian/wine-lol_5.6-1_i386.deb
-RUN dpkg -i wine-lol-glibc_2.32-2_i386.deb wine-lol_5.6-1_i386.deb
+RUN apt -y install wget gnupg
+
+# install wine-devel, the only option I found working
+RUN wget -q https://dl.winehq.org/wine-builds/winehq.key -O - | apt-key add -
+RUN sh -c 'echo deb https://dl.winehq.org/wine-builds/ubuntu/ focal main > /etc/apt/sources.list.d/wine.list'
+RUN apt -y update
+RUN apt -y install --install-recommends winehq-devel
+ENV PATH="/opt/wine-devel/bin:${PATH}"
 
 # install dependecies
 RUN apt-get install -y winetricks winbind
@@ -25,8 +28,15 @@ RUN winetricks -q corefonts
 WORKDIR /fitbitos
 RUN wget -O fitbitos.exe "https://simulator-updates.fitbit.com/Fitbit OS Simulator-latest-0.9.0.exe" 
 
+# Disable GL acceleration, it just creates black windows in most setup
+ENV LIBGL_ALWAYS_SOFTWARE=1
+
 # starter script
 COPY start.sh /root
 ENV WINEDEBUG=-all
 RUN winetricks nocrashdialog
 ENTRYPOINT [ "/bin/bash" ]
+
+# Cleanup the image
+RUN apt remove -y wget gnupg cabextract
+RUN apt autoremove -y
