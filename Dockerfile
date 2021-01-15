@@ -28,8 +28,8 @@ RUN winetricks -q corefonts
 WORKDIR /fitbitos
 RUN wget -O fitbitos.exe "https://simulator-updates.fitbit.com/Fitbit OS Simulator-latest-0.9.0.exe" 
 
-# Disable GL acceleration, it just creates black windows in most setup
-ENV LIBGL_ALWAYS_SOFTWARE=1
+# Disable libglesv2, it just creates black windows in most setup (https://bugs.winehq.org/show_bug.cgi?id=44985)
+ENV WINEDLLOVERRIDES=libglesv2=d
 
 # starter script
 COPY start.sh /root
