@@ -26,7 +26,7 @@ RUN winetricks -q corefonts
 
 # Download fitbit OS
 WORKDIR /fitbitos
-RUN wget -O fitbitos.exe "https://simulator-updates.fitbit.com/Fitbit OS Simulator-latest-0.9.0.exe" 
+RUN wget -O fitbitos.exe "https://simulator-updates.fitbit.com/Fitbit OS Simulator-latest-0.9.2.exe" 
 
 # Disable GL acceleration, it just creates black windows in most setup
 ENV LIBGL_ALWAYS_SOFTWARE=1
